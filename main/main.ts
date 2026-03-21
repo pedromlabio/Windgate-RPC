@@ -1,60 +1,72 @@
-//https://games.roblox.com/v1/games/multiget-place-details?placeIds=
+//making new typescript code
+
+//TODO: ACTUALLY ADD TYPES TO THE CODE
+
+
+
+
+
+//TODO: ask br to help with correct typing
 require('dotenv').config();
-const { default: axios } = require('axios');
-const RPC = require('discord-rpc');
-const images = "https://test2rpcimages.vercel.app";  //require("./images/images.json")
+const { default: axios } = require('axios')
+const RPC = require('discord-rpc')
+//change for web server hosted images on v2
+const images = "https://test2rpcimages.vercel.app"
 const rpc = new RPC.Client({
     transport: "ipc"
 })
-var start;
-var inGame = false;
+let start
+let inGame = false
+
+//urls
+const presenceUrl = ""
+const getPlaceDataUrl = ""
 
 async function processPresence(robloxPresence){
-    let data;
+    let data
     let universeId = robloxPresence.universeId
-    //console.log(robloxPresence)
+
     if(universeId != 1250803741){
         if(inGame){inGame = false}
-        //user is in different game
+
         console.log(universeId)
         data = {
-            details: "In different game",
+            details: "In Different Game",
             state: "In Game",
             largeImageKey: "sam"
         }
     }else{
-        //user is in test2 proceed with checkings
-        //checking is the user is on the menu or inside a world
+        //user is in windgate proceed with checkings
         let placeId = robloxPresence.placeId
+        console.log(placeId)
         if(placeId == 3540051865){
-            //user is in projoot menu
+            console.log("menu")
+            //menu
             if(!inGame){start = new Date().getTime(); inGame = true}
-            
-            let imageLink = `${images}/misc/MENU.png`;
-            console.log(imageLink)
+
+            let imageLink = `${images}/misc/MENU.png`
             data = {
-                details: "Playing Test2",
+                details: "Playing Windgate",
                 state: "In Menu",
                 largeImageKey: imageLink,
                 startTimestamp: start
             }
         }else{
             if(!inGame){start = new Date().getTime(); inGame = true}
-            //user is inside of a world
-            let placeData = await getPlaceData(placeId);
-            let dataArray = placeData.split(":");
-            let world = dataArray[0];
-            let cellCode = dataArray[1].split(",");
-            let worldArray = world.split(".");
+            //in world
+            let placeData = await getPlaceData(placeId)
+            let dataArray = placeData.split(":")
+            let world = dataArray[0]
+            let cellCode = dataArray[1].split(",")
+            let worldArray = world.split(".")
             let worldCode = ("").concat(worldArray[0], worldArray[1]);
-            console.log(world);
-            console.log(cellCode);
-            
-            //begin cell checking
+            console.log(world)
+            console.log(cellCode)
+            //cell checking
+            //TODO ASK BR IF IT'D BE BETTER TO HAVE TWO INLINE VAR DECLARATIONS TO MAKE CODE SMALLER
             if(cellCode[0] == 3 && cellCode[1] == 3){
-                //user is in center
-                let imageLink2 = `${images}/worlds/world${worldCode}/C.png`;
-                console.log(imageLink2)
+                //C
+                let imageLink2 = `${images}/worlds/world${worldCode}/C.png`
                 data = {
                     details: `World: ${world}`,
                     state: "Cell: C",
@@ -106,66 +118,36 @@ async function processPresence(robloxPresence){
                         cellString = cellString.concat("EE");
                         break;
                 }
-                let worldArray = world.split(".");
-                let worldCode = ("").concat(worldArray[0], worldArray[1]);
-                //let imageCode = ("").concat(cellString, worldCode);
-                //let imageLink = images[imageCode];
-                let imageLink2 = `${images}/worlds/world${worldCode}/${cellString}.png`;
-                //console.log(imageCode)
-                console.log(imageLink2);
+                let worldArray = world.split(".")
+                let worldCode = ("").concat(worldArray[0], worldArray[1])
+                let imageLink2 = `${images}/worlds/world${worldCode}/${cellString}.png`
                 data = {
                     details: `World: ${world}`,
                     state: `Cell: ${cellString}`,
                     largeImageKey: imageLink2,
                     startTimestamp: start
                 }
-
             }
-
         }
-
-
     }
-
-
     return data
 }
 
-
 async function getPlaceData(id){
-
     try{
-        const response = await axios.get(`https://games.roblox.com/v1/games/multiget-place-details?placeIds=${id}`,
-        {
-            headers: {
-                cookie: `.ROBLOSECURITY=${process.env.ROBLOX_USER_TOKEN}`
-            }
-        }
-
-        );
-        //console.log(response.data);
-
-        return response.data[0].name; 
-    } catch(error){
-        console.error(error.response.data);
+        const response = await axios.get(`${getPlaceDataUrl}?id=${id}`)
+        return response.data[0].name
+    }catch(error){
+        console.error(error.response.data)
     }
-
-    
 }
 
 async function getData(){
-    const response = await axios.post('https://presence.roblox.com/v1/presence/users', {
-        "userIds": [
-          process.env.ROBLOX_USER_ID
-        ]
-      }, {
-        headers: {
-            cookie: `.ROBLOSECURITY=${process.env.ROBLOX_USER_TOKEN}`
-        }
-      })
-      
+    //TODO ADD TRY CATCH
+    const response = await axios.get(`${presenceUrl}?id=${process.env.ROBLOX_USER_ID}`)
+
     let userPresence = response.data.userPresences[0]
-    
+
     let data = {}
     let presenceType = Number(userPresence.userPresenceType)
 
@@ -173,64 +155,45 @@ async function getData(){
 
         case 0:
             if(inGame){inGame = false}
-            //user is offiline
-            //console.log("caso 0")
+            //offiline
             data = {
-                details: "Not in game",
+                details: "Not in Game",
                 state: "Offline",
                 largeImageKey: "sam"
             }
-            break;
+            break
         case 1:
             if(inGame){inGame = false}
-            //user is on website
-            //console.log("caso 1")
+            //website
             data = {
-                details: "Not in game",
+                details: "Not in Game",
                 state: "Website",
-                largeImageKey: "https://static.wikia.nocookie.net/projoot-testing/images/e/e6/Site-logo.png/revision/latest?cb=20210603012513",
+                largeImageKey: "https://static.wikia.nocookie.net/projoot-testing/images/e/e6/Site-logo.png/revision/latest?cb=20210603012513"
             }
-            break;
+            break
         case 2:
-            //user is in game proceed with game checking
+            //in game
             data = await processPresence(userPresence)
-            
-
-            break;
-    }
-
-
-    //console.log(data)
-    return data;
+            break
+    } 
+    return data
 }
 
-
-
-async function updatePresence(rpcData) {
-    //this is where the main code will run
-    //console.log(rpcData)
+async function updatePresence(rpcData){
     rpc.setActivity(rpcData)
-    
 }
-
-
 
 rpc.on("ready", async () => {
-    let data = await getData();
-    //console.log(data)
-    updatePresence(data);
-
+    let data = await getData()
+    updatePresence(data)
 
     setInterval(async () => {
-        data = await getData();
-        updatePresence(data);
-    }, 5e3);
-
-
-    console.log("active");
-
+        data = await getData()
+        updatePresence(data)
+    }, 5e3)
+    console.log("active")
 })
 
 rpc.login({
-    clientId: process.env.DISCORD_CLIENT_ID,
+    clientId: process.env.DISCORD_CLIENT_ID
 })
