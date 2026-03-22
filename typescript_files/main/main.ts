@@ -19,8 +19,9 @@ let start
 let inGame = false
 
 //urls
-const presenceUrl = ""
-const getPlaceDataUrl = ""
+const serverUrl = "https://windgaterpcserver-production.up.railway.app"
+const presenceUrl = `${serverUrl}/getpresence`
+const getPlaceDataUrl = `${serverUrl}/getplacedata`
 
 async function processPresence(robloxPresence){
     let data
