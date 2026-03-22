@@ -6,11 +6,17 @@
   "author": "jvopinho <jvopinho.dev@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@types/node": "^25.5.0",
     "axios": "^0.27.2",
     "discord-rpc": "^4.0.1",
-    "dotenv": "^16.0.2"
+    "dotenv": "^16.0.2",
+    "pkg": "^5.8.1",
+    "typescript": "^5.9.3"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.10.1"
+  },
+  "scripts": {
+    "build": "tsc && pkg dist/main.js --targets node18-win-x64,node18-mac-x64,node18-mac-arm64 --out-path build"
   }
 }
