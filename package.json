@@ -1,20 +1,18 @@
 {
-  "name": "test2rpc",
+  "name": "Windgate-RPC",
   "version": "1.0.0",
   "main": "main/main.js",
-  "repository": "https://github.com/JVOPINHO/test2rpc.git",
-  "author": "jvopinho <jvopinho.dev@gmail.com>",
+  "repository": "https://github.com/pedromlabio/Windgate-RPC.git",
+  "author": "Mr Tower 68717122+pedromlabio@users.noreply.github.com.",
   "license": "MIT",
   "dependencies": {
-    "@types/node": "^25.5.0",
     "axios": "^0.27.2",
     "discord-rpc": "^4.0.1",
-    "dotenv": "^16.0.2",
     "pkg": "^5.8.1",
     "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^2.10.1"
+    "@types/node": "^25.5.0"
   },
   "scripts": {
     "build": "tsc && pkg dist/main.js --targets node18-win-x64,node18-mac-x64,node18-mac-arm64 --out-path build"
