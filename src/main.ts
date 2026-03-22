@@ -14,7 +14,7 @@ const { default: axios } = require('axios')
 const RPC = require('discord-rpc')
 const fs = require('fs')
 //change for web server hosted images on v2
-const images = "https://test2rpcimages.vercel.app"
+//const images = "https://test2rpcimages.vercel.app"
 const rpc = new RPC.Client({
     transport: "ipc"
 })
@@ -26,7 +26,7 @@ let start
 let inGame = false
 
 async function main(){
-const readline = require('readline')
+    const readline = require('readline')
 
     async function getOrPromptConfig(): Promise<string> {
         const rl = readline.createInterface({
@@ -72,6 +72,27 @@ const readline = require('readline')
     const presenceUrl = `${serverUrl}/getpresence`
     const getPlaceDataUrl = `${serverUrl}/getplacedata`
 
+    async function getMenuImage(): Promise<string | undefined> {
+    try {
+        const response = await axios.get(`https://api.github.com/repos/pedromlabio/windgate_rpc_images/contents/misc/MENU.png`)
+        return response.data.download_url
+        } catch {
+        return undefined
+        }
+    }
+
+    async function getRandomCellImage(worldCode: string, cellString: string): Promise<string | undefined> {
+    try {
+        const response = await axios.get(`https://api.github.com/repos/pedromlabio/windgate_rpc_images/contents/worlds/world${worldCode}/${cellString}`)
+        const files = response.data.filter((f: any) => f.name.endsWith('.png'))
+        if (files.length === 0) return undefined
+        const random = files[Math.floor(Math.random() * files.length)]
+        return random.download_url
+    } catch {
+        return undefined
+    }
+}
+
     async function processPresence(robloxPresence){
         let data
         let universeId = robloxPresence.universeId
@@ -94,7 +115,7 @@ const readline = require('readline')
                 //menu
                 if(!inGame){start = new Date().getTime(); inGame = true}
 
-                let imageLink = `${images}/misc/MENU.png`
+                let imageLink = await getMenuImage()//`${images}/misc/MENU.png`
                 data = {
                     details: "Playing Windgate",
                     state: "In Menu",
@@ -116,7 +137,7 @@ const readline = require('readline')
                 //TODO ASK BR IF IT'D BE BETTER TO HAVE TWO INLINE VAR DECLARATIONS TO MAKE CODE SMALLER
                 if(cellCode[0] == 3 && cellCode[1] == 3){
                     //C
-                    let imageLink2 = `${images}/worlds/world${worldCode}/C.png`
+                    let imageLink2 = await getRandomCellImage(worldCode, 'C')//`${images}/worlds/world${worldCode}/C.png`
                     data = {
                         details: `World: ${world}`,
                         state: "Cell: C",
@@ -170,7 +191,7 @@ const readline = require('readline')
                     }
                     let worldArray = world.split(".")
                     let worldCode = ("").concat(worldArray[0], worldArray[1])
-                    let imageLink2 = `${images}/worlds/world${worldCode}/${cellString}.png`
+                    let imageLink2 = await getRandomCellImage(worldCode, cellString)//`${images}/worlds/world${worldCode}/${cellString}.png`
                     data = {
                         details: `World: ${world}`,
                         state: `Cell: ${cellString}`,
