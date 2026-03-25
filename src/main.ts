@@ -104,7 +104,7 @@ async function main(){
             data = {
                 details: "In Different Game",
                 state: "In Game",
-                largeImageKey: "sam"
+                largeImageKey: "https://static.wikia.nocookie.net/projoot-testing/images/e/e6/Site-logo.png/revision/latest?cb=20210603012513"
             }
         }else{
             //user is in windgate proceed with checkings
@@ -230,7 +230,7 @@ async function main(){
                 data = {
                     details: "Not in Game",
                     state: "Offline",
-                    largeImageKey: "sam"
+                    largeImageKey: "https://static.wikia.nocookie.net/projoot-testing/images/e/e6/Site-logo.png/revision/latest?cb=20210603012513"
                 }
                 break
             case 1:
